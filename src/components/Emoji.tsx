@@ -1,0 +1,2 @@
+export function moodEmoji(score:number){ switch(score){ case 1:return '😞'; case 2:return '🙁'; case 3:return '😐'; case 4:return '🙂'; case 5:return '😊'; default:return '🙂'; } }
+export function moodLabel(score:number){ return ['Very bad','Bad','Neutral','Good','Happy'][score-1] ?? 'Mood'; }
