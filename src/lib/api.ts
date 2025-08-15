@@ -1,8 +1,10 @@
 import axios from 'axios';
+// src/lib/api.ts
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE,
+  baseURL: '/api',
   headers: { 'Content-Type':'application/json', 'Accept':'application/json' }
 });
+
 
 
 api.interceptors.request.use((config) => {
