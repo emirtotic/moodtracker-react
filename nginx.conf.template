@@ -1,0 +1,33 @@
+server {
+  listen ${PORT};
+  server_name _;
+
+  root /usr/share/nginx/html;
+  index index.html;
+
+  # Security & UX headers
+  add_header X-Content-Type-Options nosniff;
+  add_header X-Frame-Options SAMEORIGIN;
+  add_header Referrer-Policy "strict-origin-when-cross-origin";
+  add_header Permissions-Policy "geolocation=(), microphone=(), camera=()";
+
+  # SPA fallback (React Router)
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+
+  # Cache immutable bundled assets
+  location /assets/ {
+    expires 30d;
+    add_header Cache-Control "public, max-age=2592000, immutable";
+  }
+
+  # Never cache index.html
+  location = /index.html {
+    add_header Cache-Control "no-store";
+  }
+
+  # Gzip
+  gzip on;
+  gzip_types text/plain text/css application/javascript application/json image/svg+xml;
+}
