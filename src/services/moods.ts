@@ -22,27 +22,24 @@ export async function getMoodsRange(params: { start: string; end: string }): Pro
   return list.map(normalize);
 }
 
-// ⬇⬇⬇ ovde menjamo endpoint na /api/moods/create
 export async function createMood(body: { date: string; score: number; note?: string }) {
   const payload = { date: body.date, moodScore: body.score, note: body.note };
   const res = await api.post("/api/moods/create", payload);
 
-  // Ako backend vrati objekat — normalizuj, inače pusti da Dashboard uradi reload posle onSaved()
   if (res.data) return normalize(res.data);
   return;
 }
 
 export async function updateMood(
-  id: number | null,               // ako ti endpoint ne traži id u path-u, prosledi null
+  id: number | null,
   body: { date: string; score?: number; note?: string }
 ){
   const payload = {
-    date: body.date,                          // obavezno
+    date: body.date,
     ...(typeof body.score === "number" ? { moodScore: body.score } : {}),
     ...(typeof body.note  !== "undefined" ? { note: body.note } : {}),
   };
 
-  // izaberi URL u zavisnosti od backend-a
   const url = id != null ? `/api/moods/update/${id}` : `/api/moods/update`;
   const res = await api.put(url, payload);
   return res.data ? normalize(res.data) : undefined;
