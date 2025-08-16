@@ -41,8 +41,12 @@ export default function Stats() {
   const [planRaw, setPlanRaw] = useState<string | undefined>();
   const [plan, setPlan] = useState<PlanDay[] | undefined>();
 
+  // Uvodni tekst (nestaje nakon prve analize)
+  const [showIntro, setShowIntro] = useState(true);
+
   const runAnalyze = async () => {
     setLoadingAnalyze(true);
+    setShowIntro(false);
     try {
       const r = await analyze();
       setAverage(r.average);
@@ -99,59 +103,73 @@ export default function Stats() {
     URL.revokeObjectURL(url);
   };
 
+  // sticky bar prikazujemo tek nakon analize
   const showSticky = hasResults;
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+
       <main
         className={
           `flex-1 max-w-5xl mx-auto px-4 py-8 md:py-10 ` +
           (showSticky ? 'pb-24 md:pb-10' : '')
         }
       >
-        {/* Page header (title + CTA aligned) */}
-<div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-  <h1 className="text-xl md:text-2xl font-semibold text-slate-800">Statistics</h1>
+        {/* Naslov + uvod + CTA (centar) */}
+        <section className="mb-6 flex flex-col items-center text-center gap-4">
+          <h1 className="text-2xl md:text-3xl font-semibold text-slate-900">Statistics</h1>
 
-  <div className="flex items-center gap-3 sm:justify-end">
-    <button
-      onClick={runAnalyze}
-      disabled={loadingAnalyze}
-      className="inline-flex items-center rounded-lg bg-emerald-600 text-white px-4 py-2 disabled:opacity-50"
-    >
-      {loadingAnalyze ? 'Analyzing…' : 'Analyze my moods'}
-    </button>
-  </div>
-</div>
+          {showIntro && (
+            <p className="text-slate-600 max-w-2xl leading-relaxed">
+              Analyze the moods you’ve recorded over time. Our AI will summarize your patterns and share caring, 
+              practical suggestions to help you improve—or maintain—your well-being when things are going well. 
+              After the analysis, you can generate a personalized 7-day plan for happier, healthier days.
+            </p>
+          )}
 
+          <button
+            onClick={runAnalyze}
+            disabled={loadingAnalyze}
+            className="rounded-lg bg-emerald-600 text-white px-6 py-3 text-base font-medium disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:ring-offset-2"
+            aria-label="Analyze my moods"
+          >
+            {loadingAnalyze ? 'Analyzing…' : 'Analyze my moods'}
+          </button>
+        </section>
 
-        {/* Results */}
+        {/* Rezultati */}
         {hasResults && (
-          <div className="mt-6 space-y-4">
+          <section aria-live="polite" className="mt-6 space-y-4">
             {typeof average !== 'undefined' && (
               <div className="text-slate-700 text-sm md:text-base">
-                Average mood: <span className="font-semibold">{average.toFixed(2)}</span>
+                Average mood rate:{' '}
+                <span className="font-semibold">{average.toFixed(2)}</span>
               </div>
             )}
 
             {summary && (
-              <div className="text-slate-700 bg-white rounded-xl p-3 md:p-4 border border-[#EEE7DC] text-sm md:text-base">
+              <div className="text-slate-700 bg-white rounded-xl p-4 border border-[#EEE7DC] text-sm md:text-base">
                 {summary}
               </div>
             )}
 
             {suggestions && suggestions.length > 0 && (
-              <ul className="list-disc pl-5 md:pl-6 text-slate-700 bg-white rounded-xl p-3 md:p-4 border border-[#EEE7DC] text-sm md:text-base">
-                {suggestions.map((s, i) => (
-                  <li key={i}>{s}</li>
-                ))}
-              </ul>
+              <div className="bg-white rounded-xl p-4 border border-[#EEE7DC]">
+                <h3 className="font-semibold text-slate-800 mb-2 text-sm md:text-base">
+                  Suggestions
+                </h3>
+                <ul className="list-disc pl-5 md:pl-6 text-slate-700 text-sm md:text-base space-y-1">
+                  {suggestions.map((s, i) => (
+                    <li key={i}>{s}</li>
+                  ))}
+                </ul>
+              </div>
             )}
-          </div>
+          </section>
         )}
 
-        {/* Sticky mobile CTA (uvek vidljiv na mobilnom kad ima rezultata) */}
+        {/* Sticky CTA za plan (pojavljuje se nakon analize) */}
         {showSticky && (
           <div
             className="
@@ -166,13 +184,14 @@ export default function Stats() {
             "
           >
             <br></br>
-            <div className="max-w-5xl mx-auto flex gap-3">
+            <div className="max-w-5xl mx-auto flex justify-center md:justify-start">
               <button
                 onClick={runPlan}
                 disabled={loadingPlan}
-                className="flex-1 md:flex-none md:w-auto rounded-lg bg-emerald-700 text-white px-4 py-3 md:py-2 disabled:opacity-50"
+                className="rounded-lg bg-emerald-700 text-white px-5 py-3 md:py-2 font-medium disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-800 focus:ring-offset-2"
+                aria-label="Create 7-day plan"
               >
-                {loadingPlan ? 'Creating…' : 'Create recovery plan'}
+                {loadingPlan ? 'Creating…' : 'Create 7-Day Plan'}
               </button>
             </div>
           </div>
@@ -190,7 +209,9 @@ export default function Stats() {
                 const lastIdx = d.items.length - 1;
                 return (
                   <div key={d.day} className="bg-[#F8F5EF] border border-[#EEE7DC] rounded-xl p-3 md:p-4">
-                    <div className="font-semibold text-slate-800 mb-2 text-sm md:text-base">Day {d.day}</div>
+                    <div className="font-semibold text-slate-800 mb-2 text-sm md:text-base">
+                      Day {d.day}
+                    </div>
                     <ul className="space-y-1">
                       {d.items.map((line, idx) => {
                         const isQuestion = /[?]$/.test(line) || /^(What|How)/i.test(line);
@@ -214,13 +235,13 @@ export default function Stats() {
             <div className="mt-4 flex flex-col sm:flex-row gap-2">
               <button
                 onClick={copyPlan}
-                className="rounded-lg border border-[#E5DACA] bg-white px-4 py-2 hover:bg-[#F4EFE8]"
+                className="rounded-lg border border-[#E5DACA] bg-white px-4 py-2 hover:bg-[#F4EFE8] focus:outline-none focus:ring-2 focus:ring-emerald-700"
               >
                 Copy plan
               </button>
               <button
                 onClick={downloadPlan}
-                className="rounded-lg border border-[#E5DACA] bg-white px-4 py-2 hover:bg-[#F4EFE8]"
+                className="rounded-lg border border-[#E5DACA] bg-white px-4 py-2 hover:bg-[#F4EFE8] focus:outline-none focus:ring-2 focus:ring-emerald-700"
               >
                 Download .txt
               </button>
@@ -231,6 +252,7 @@ export default function Stats() {
           </section>
         )}
       </main>
+
       <Footer />
     </div>
   );
