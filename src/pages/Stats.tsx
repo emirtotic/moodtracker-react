@@ -99,7 +99,6 @@ export default function Stats() {
     URL.revokeObjectURL(url);
   };
 
-  // sticky bar je vidljiv kad postoje rezultati (nakon Analyze)
   const showSticky = hasResults;
 
   return (
@@ -108,21 +107,24 @@ export default function Stats() {
       <main
         className={
           `flex-1 max-w-5xl mx-auto px-4 py-8 md:py-10 ` +
-          (showSticky ? 'pb-24 md:pb-10' : '') // prostor ispod da fiksni bar ne preklapa sadržaj
+          (showSticky ? 'pb-24 md:pb-10' : '')
         }
       >
-        <h1 className="text-xl md:text-2xl font-semibold text-slate-800 mb-4">Statistics</h1>
+        {/* Page header (title + CTA aligned) */}
+<div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+  <h1 className="text-xl md:text-2xl font-semibold text-slate-800">Statistics</h1>
 
-        {/* Analyze CTA */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={runAnalyze}
-            disabled={loadingAnalyze}
-            className="rounded-lg bg-emerald-600 text-white px-4 py-2 disabled:opacity-50"
-          >
-            {loadingAnalyze ? 'Analyzing…' : 'Analyze last entries'}
-          </button>
-        </div>
+  <div className="flex items-center gap-3 sm:justify-end">
+    <button
+      onClick={runAnalyze}
+      disabled={loadingAnalyze}
+      className="inline-flex items-center rounded-lg bg-emerald-600 text-white px-4 py-2 disabled:opacity-50"
+    >
+      {loadingAnalyze ? 'Analyzing…' : 'Analyze my moods'}
+    </button>
+  </div>
+</div>
+
 
         {/* Results */}
         {hasResults && (

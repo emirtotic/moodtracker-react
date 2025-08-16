@@ -70,7 +70,7 @@ export default function MoodForm({ onSaved }: { onSaved: () => void }) {
 
           <div>
             <label className="block text-xs md:text-sm text-slate-700 mb-1">
-              Current Mood
+              Mood for This Day
             </label>
             <select
               value={moodScore}
@@ -88,12 +88,12 @@ export default function MoodForm({ onSaved }: { onSaved: () => void }) {
 
         <div>
           <label className="block text-xs md:text-sm text-slate-700 mb-1">
-            Notes (Optional)
+            Describe Your Day and How You Felt
           </label>
           <textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="What's on your mind? How did this mood come about?"
+            placeholder="Write about your day — what happened, how you felt, and why."
             className="w-full rounded-lg border border-[#E5DACA] bg-white p-2.5 md:p-3 h-28 text-sm md:text-base"
             maxLength={500}
           />
