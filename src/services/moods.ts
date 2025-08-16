@@ -40,7 +40,7 @@ export async function updateMood(
     ...(typeof body.note  !== "undefined" ? { note: body.note } : {}),
   };
 
-  const url = id != null ? `/api/moods/update/${id}` : `/api/moods/update`;
+  const url = id != null ? `/api/moods/update` : `/api/moods/update`;
   const res = await api.put(url, payload);
   return res.data ? normalize(res.data) : undefined;
 }
