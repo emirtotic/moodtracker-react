@@ -7,7 +7,7 @@ const BASE = RAW.endsWith('/') ? RAW.slice(0, -1) : RAW;
 console.log('API BASE =', BASE);
 
 const api = axios.create({
-  baseURL: "https://moodtracker-app-production.up.railway.app",
+  baseURL: BASE,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
