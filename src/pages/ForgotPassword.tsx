@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { changePassword } from '../services/auth';
 
@@ -11,12 +11,22 @@ export default function ForgotPassword() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  // Success modal
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    if (!showSuccess) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') navigate('/login');
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showSuccess, navigate]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setSuccessMsg(null);
 
     if (!email) return setError('Email is required.');
     if (!/^\S+@\S+\.\S+$/.test(email)) return setError('Please enter a valid email address.');
@@ -26,9 +36,9 @@ export default function ForgotPassword() {
 
     setLoading(true);
     try {
-      const res = await changePassword({ email, newPassword });
-      setSuccessMsg(res.message || 'Password has been changed. You can now sign in.');
-      setTimeout(() => navigate('/login'), 1500);
+      await changePassword({ email, newPassword });
+      setShowSuccess(true);
+      setTimeout(() => navigate('/login'), 3000);
     } catch (e: any) {
       setError(e?.message ?? 'Password change failed');
     } finally {
@@ -70,7 +80,7 @@ export default function ForgotPassword() {
                 placeholder="you@example.com"
                 className="w-full border rounded-xl p-3 text-sm md:text-base"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
                 required
               />
@@ -84,7 +94,7 @@ export default function ForgotPassword() {
                   placeholder="••••••••"
                   className="w-full border rounded-xl p-3 text-sm md:text-base pr-12"
                   value={newPassword}
-                  onChange={e => setNewPassword(e.target.value)}
+                  onChange={(e) => setNewPassword(e.target.value)}
                   autoComplete="new-password"
                   required
                   minLength={8}
@@ -92,7 +102,7 @@ export default function ForgotPassword() {
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPw(s => !s)}
+                  onClick={() => setShowPw((s) => !s)}
                   className="absolute inset-y-0 right-2 my-auto text-slate-500 text-sm hover:text-slate-700"
                   aria-label={showPw ? 'Hide password' : 'Show password'}
                 >
@@ -103,7 +113,6 @@ export default function ForgotPassword() {
             </div>
 
             {error && <div className="text-red-600 text-sm">{error}</div>}
-            {successMsg && <div className="text-emerald-700 text-sm">{successMsg}</div>}
 
             <button
               disabled={loading}
@@ -121,6 +130,43 @@ export default function ForgotPassword() {
           </div>
         </div>
       </div>
+
+      {/* Success Modal */}
+      {showSuccess && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="pw-changed-title"
+        >
+          <div className="bg-white rounded-xl shadow-lg border border-[#EEE7DC] max-w-sm w-full p-6 text-center">
+            <h2 id="pw-changed-title" className="text-lg font-semibold text-emerald-700 mb-2">
+              Password changed
+            </h2>
+            <p className="text-slate-600 mb-4">
+              Your password has been successfully updated. Please log in with your new password.
+            </p>
+            <button
+              onClick={() => navigate('/login')}
+              className="w-full rounded-lg bg-emerald-600 text-white py-2.5 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:ring-offset-2"
+              autoFocus
+            >
+              Go to Login
+            </button>
+
+            {/* Optional: „close” ikonica u uglu, vodi na login */}
+            <button
+              onClick={() => navigate('/login')}
+              className="absolute top-3 right-3 text-slate-400 hover:text-slate-600"
+              aria-label="Close"
+              title="Close"
+              type="button"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
