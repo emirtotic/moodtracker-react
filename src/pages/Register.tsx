@@ -8,6 +8,8 @@ export default function Register() {
   const [email,     setEmail]     = useState('');
   const [password,  setPassword]  = useState('');
 
+  const [showPassword, setShowPassword] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState<string | null>(null);
 
@@ -57,6 +59,7 @@ export default function Register() {
           <p className="text-slate-600 mb-5 md:mb-6 text-sm md:text-base">Join and start tracking your mood</p>
 
           <form onSubmit={submit} className="space-y-3 md:space-y-4">
+            {/* First & Last Name */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs md:text-sm text-slate-700 mb-1">First name</label>
@@ -86,6 +89,7 @@ export default function Register() {
               </div>
             </div>
 
+            {/* Email */}
             <div>
               <label className="block text-xs md:text-sm text-slate-700 mb-1">Email</label>
               <input
@@ -100,19 +104,29 @@ export default function Register() {
               />
             </div>
 
+            {/* Password with toggle */}
             <div>
               <label className="block text-xs md:text-sm text-slate-700 mb-1">Password</label>
-              <input
-                type="password"
-                className="w-full border rounded-xl p-3 text-sm md:text-base"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="new-password"
-                required
-                minLength={8}
-                maxLength={30}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="w-full border rounded-xl p-3 text-sm md:text-base pr-10"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
+                  maxLength={30}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-3 flex items-center text-slate-500 hover:text-slate-700"
+                >
+                  {showPassword ? "🙈" : "👁"}
+                </button>
+              </div>
               <div className="text-[11px] text-slate-500 mt-1">8–30 characters.</div>
             </div>
 

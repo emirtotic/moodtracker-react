@@ -12,9 +12,9 @@ import {
 } from '../services/moods';
 
 export default function Dashboard() {
-  const [from, setFrom] = useState<string>(new Date().toISOString().slice(0, 10));
-  const [to, setTo] = useState<string>(new Date().toISOString().slice(0, 10));
-  const [sort, setSort] = useState<'asc' | 'desc'>('desc'); // UI-only; backend ne prima sort
+  const [from, setFrom] = useState<string>(daysAgo(7)); // 👈 pre 7 dana
+  const [to, setTo] = useState<string>(formatDate(new Date())); // danas
+  const [sort, setSort] = useState<'asc' | 'desc'>('desc');
   const [moods, setMoods] = useState<Mood[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -152,4 +152,14 @@ export default function Dashboard() {
       <Footer />
     </div>
   );
+}
+
+function formatDate(date: Date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function daysAgo(n: number) {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return formatDate(d);
 }

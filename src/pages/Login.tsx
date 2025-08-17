@@ -5,6 +5,8 @@ import { login } from '../services/auth';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,6 +50,7 @@ export default function Login() {
           <p className="text-slate-600 mb-5 md:mb-6 text-sm md:text-base">Sign in to continue</p>
 
           <form onSubmit={submit} className="space-y-3 md:space-y-4">
+            {/* Email */}
             <div>
               <label className="block text-xs md:text-sm text-slate-700 mb-1">Email</label>
               <input
@@ -61,26 +64,40 @@ export default function Login() {
               />
             </div>
 
+            {/* Password with toggle */}
             <div>
               <label className="block text-xs md:text-sm text-slate-700 mb-1">Password</label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                className="w-full border rounded-xl p-3 text-sm md:text-base"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                autoComplete="current-password"
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  className="w-full border rounded-xl p-3 text-sm md:text-base pr-10"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  autoComplete="current-password"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-3 flex items-center text-slate-500 hover:text-slate-700"
+                >
+                  {showPassword ? '🙈' : '👁'}
+                </button>
+              </div>
             </div>
-            <div className="flex justify-end">
-  <Link to="/change-password" className="text-sm text-emerald-700 hover:underline">
-    Forgot password?
-  </Link>
-</div>
 
+            {/* Forgot password */}
+            <div className="flex justify-end">
+              <Link to="/change-password" className="text-sm text-emerald-700 hover:underline">
+                Forgot password?
+              </Link>
+            </div>
+
+            {/* Error */}
             {error && <div className="text-red-600 text-sm">{error}</div>}
 
+            {/* Button */}
             <button
               disabled={loading}
               className="w-full rounded-xl bg-emerald-600 text-white py-3 hover:bg-emerald-700 disabled:opacity-50"
