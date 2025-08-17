@@ -17,7 +17,6 @@ export default function Register() {
     e.preventDefault();
     setError(null);
 
-    // Klijentska validacija usklađena sa backendom
     if (firstName.trim().length < 2) return setError('First name must be at least 2 characters.');
     if (lastName.trim().length  < 2) return setError('Last name must be at least 2 characters.');
     if (password.length < 8)        return setError('Password should be at least 8 characters.');
@@ -25,7 +24,6 @@ export default function Register() {
     setLoading(true);
     try {
       await register({ firstName, lastName, email, password });
-      // Redirect na login + flag za poruku
       navigate('/login', { replace: true, state: { justRegistered: true } });
     } catch (e: any) {
       setError(e?.response?.data?.message ?? 'Registration failed');

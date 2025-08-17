@@ -73,6 +73,11 @@ export default function Login() {
                 required
               />
             </div>
+            <div className="flex justify-end">
+  <Link to="/change-password" className="text-sm text-emerald-700 hover:underline">
+    Forgot password?
+  </Link>
+</div>
 
             {error && <div className="text-red-600 text-sm">{error}</div>}
 
